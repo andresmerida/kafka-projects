@@ -1,9 +1,8 @@
 package com.ms.inventory.service;
 
-import com.ms.inventory.dto.EventInventoryResponse;
-import com.ms.inventory.dto.VenueInventoryResponse;
+import com.ms.inventory.dto.response.EventInventoryResponse;
+import com.ms.inventory.dto.response.VenueInventoryResponse;
 import com.ms.inventory.entity.Event;
-import com.ms.inventory.entity.Venue;
 import com.ms.inventory.repository.EventRepository;
 import com.ms.inventory.repository.VenueRepository;
 import org.springframework.stereotype.Service;
@@ -25,8 +24,10 @@ public class InventoryService {
         final List<Event> events = eventRepository.findAll();
 
         return events.stream().map(e -> new EventInventoryResponse(
+                e.getId(),
                 e.getName(),
                 e.getLeftCapacity(),
+                e.getTicketPrice(),
                 e.getVenue()
         )).toList();
     }
@@ -36,6 +37,16 @@ public class InventoryService {
                 venue.getId(),
                 venue.getName(),
                 venue.getTotalCapacity()
+        ));
+    }
+
+    public Optional<EventInventoryResponse> getEventInformation(Long eventId) {
+        return eventRepository.findById(eventId).map(event -> new EventInventoryResponse(
+                event.getId(),
+                event.getName(),
+                event.getLeftCapacity(),
+                event.getTicketPrice(),
+                event.getVenue()
         ));
     }
 }

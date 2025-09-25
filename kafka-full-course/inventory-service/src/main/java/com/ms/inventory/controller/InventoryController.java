@@ -1,10 +1,9 @@
 package com.ms.inventory.controller;
 
-import com.ms.inventory.dto.EventInventoryResponse;
-import com.ms.inventory.dto.VenueInventoryResponse;
+import com.ms.inventory.dto.response.EventInventoryResponse;
+import com.ms.inventory.dto.response.VenueInventoryResponse;
 import com.ms.inventory.exceptions.ResourceNotFoundException;
 import com.ms.inventory.service.InventoryService;
-import org.springframework.boot.context.config.ConfigDataResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,4 +31,13 @@ public class InventoryController {
         return optionalDto.map(ResponseEntity::ok)
                 .orElseThrow(() -> new ResourceNotFoundException("Venue with id: " + venueId + " not found"));
     }
+
+    @GetMapping("/events/{eventId}")
+    public ResponseEntity<EventInventoryResponse> getEventById(@PathVariable Long eventId) {
+        final Optional<EventInventoryResponse> eventDto = inventoryService.getEventInformation(eventId);
+
+        return eventDto.map(ResponseEntity::ok)
+                .orElseThrow(() -> new ResourceNotFoundException("Event with id: " + eventId + " not found"));
+    }
+
 }
