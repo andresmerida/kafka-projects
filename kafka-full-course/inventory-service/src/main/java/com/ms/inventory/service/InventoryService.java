@@ -5,12 +5,14 @@ import com.ms.inventory.dto.response.VenueInventoryResponse;
 import com.ms.inventory.entity.Event;
 import com.ms.inventory.repository.EventRepository;
 import com.ms.inventory.repository.VenueRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class InventoryService {
     private final EventRepository eventRepository;
     private final VenueRepository venueRepository;
@@ -48,5 +50,13 @@ public class InventoryService {
                 event.getTicketPrice(),
                 event.getVenue()
         ));
+    }
+
+    public void updateEventCapacity(Long eventId, Integer ticketsBooked) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new RuntimeException("Event not found for eventId: " + eventId));
+        event.setLeftCapacity(event.getLeftCapacity() - ticketsBooked);
+        eventRepository.saveAndFlush(event);
+        log.info("Updated event capacity for eventId: {} with tickets booked: {} ", eventId, ticketsBooked);
     }
 }
