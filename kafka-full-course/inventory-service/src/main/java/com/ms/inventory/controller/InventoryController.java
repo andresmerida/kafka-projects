@@ -40,4 +40,10 @@ public class InventoryController {
                 .orElseThrow(() -> new ResourceNotFoundException("Event with id: " + eventId + " not found"));
     }
 
+    @PatchMapping("/events/{eventId}/capacity/{ticketsBooked}")
+    public ResponseEntity<Void> updateEventCapacity(@PathVariable Long eventId,
+                                                    @PathVariable Integer ticketsBooked) {
+        inventoryService.updateEventCapacity(eventId, ticketsBooked);
+        return ResponseEntity.ok().build();
+    }
 }
