@@ -9,6 +9,7 @@ import org.springframework.web.servlet.function.ServerResponse;
 
 import java.net.URI;
 
+import static org.springframework.cloud.gateway.server.mvc.filter.BeforeFilterFunctions.setPath;
 import static org.springframework.cloud.gateway.server.mvc.filter.BeforeFilterFunctions.uri;
 import static org.springframework.cloud.gateway.server.mvc.filter.CircuitBreakerFilterFunctions.circuitBreaker;
 import static org.springframework.cloud.gateway.server.mvc.handler.GatewayRouterFunctions.route;
@@ -27,6 +28,15 @@ public class InventoryServiceRoutes {
                         "/api/v1/inventory/venues/{venueId}"), http())
                 .filter(circuitBreaker("inventoryServiceCircuitBreaker", URI.create("forward:/fallbackRoute")))
                 .before(uri("http://localhost:8081"))
+                .build();
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> inventoryServiceApiDocs() {
+        return route("inventory-service-api-docs")
+                .route(path("/docs/inventory-service/v3/api-docs"), http())
+                .before(uri("http://localhost:8081"))
+                .before(setPath("/v3/api-docs"))
                 .build();
     }
 }
